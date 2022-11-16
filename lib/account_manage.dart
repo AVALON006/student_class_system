@@ -112,7 +112,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
                       break;
                     case 4:
                       String newno = controller.text;
-                      if (!await Global.ValidNo(newno)) {
+                      if (!await Global.ValidAccNo(newno)) {
                         break;
                       }
                       await Global.conn.query(

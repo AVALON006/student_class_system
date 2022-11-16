@@ -5,6 +5,8 @@ import 'package:student_class_system/left_drawer.dart';
 import 'package:student_class_system/login.dart';
 import 'package:window_size/window_size.dart';
 import 'package:provider/provider.dart';
+import 'package:student_class_system/teacher_manage.dart';
+import 'package:student_class_system/add_teacher.dart';
 import 'person_info.dart';
 import 'global.dart';
 import 'account_manage.dart';
@@ -57,7 +59,8 @@ class MyApp extends StatelessWidget {
           "login": (context) => LoginPage(),
           "home": (context) => MyHomePage(),
           "per_info": (context) => PersonInfoPage(),
-          "add_acc": (context) => AddAccountPage()
+          "add_acc": (context) => AddAccountPage(),
+          "add_tea": (context) => AddTeacherPage(),
         },
         theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -84,6 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<List<Widget>> tabpage = [
     [
       AccountManagePage(),
+      TeacherManagePage(),
       //TODO 添加其它页面的内容
     ]
   ];
@@ -146,8 +150,8 @@ class _MyHomePageState extends State<MyHomePage> {
           children: tabs.map((Tab tab) {
             String label = tab.text!;
             int index = tabs.indexOf(tab);
-            if (index == 0) {
-              return tabpage[0][0];
+            if (index < 2) {
+              return tabpage[0][index];
             }
             return Center(
               child: Column(
