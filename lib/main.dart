@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:student_class_system/add_account.dart';
+import 'package:student_class_system/add_page/add_account.dart';
 import 'package:student_class_system/cross_global.dart';
 import 'package:student_class_system/left_drawer.dart';
 import 'package:student_class_system/login.dart';
 import 'package:window_size/window_size.dart';
 import 'package:provider/provider.dart';
 import 'package:student_class_system/teacher_manage.dart';
-import 'package:student_class_system/add_teacher.dart';
-import 'person_info.dart';
-import 'global.dart';
-import 'account_manage.dart';
+import 'package:student_class_system/add_page/add_teacher.dart';
+import 'package:student_class_system/teacourse_manage.dart';
+import 'package:student_class_system/person_info.dart';
+import 'package:student_class_system/global.dart';
+import 'package:student_class_system/account_manage.dart';
+import 'package:student_class_system/add_page/add_tea_course.dart';
 
 import 'dart:io';
 
@@ -61,6 +63,7 @@ class MyApp extends StatelessWidget {
           "per_info": (context) => PersonInfoPage(),
           "add_acc": (context) => AddAccountPage(),
           "add_tea": (context) => AddTeacherPage(),
+          'add_tea_course': (context) => AddTeaCoursePage(),
         },
         theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -89,7 +92,21 @@ class _MyHomePageState extends State<MyHomePage> {
       AccountManagePage(),
       TeacherManagePage(),
       //TODO 添加其它页面的内容
-    ]
+    ],
+    [
+      Scaffold(
+        appBar: AppBar(title: Text('学生第一页')),
+      ),
+      Scaffold(
+        appBar: AppBar(title: Text('学生第二页')),
+      ),
+    ],
+    [
+      TeaCourseManagePage(),
+      Scaffold(
+        appBar: AppBar(title: Text('老师第二页')),
+      ),
+    ],
   ];
   List<Tab> tabs = [];
 
@@ -151,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
             String label = tab.text!;
             int index = tabs.indexOf(tab);
             if (index < 2) {
-              return tabpage[0][index];
+              return tabpage[Global.account!.role][index];
             }
             return Center(
               child: Column(

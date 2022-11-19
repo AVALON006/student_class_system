@@ -122,6 +122,55 @@ class Global {
     return true;
   }
 
+  static Future<bool> ValidCourseNo(String no) async {
+    Results res = await Global.conn.query(
+        'select count(*) from Course '
+        'where Cno = ?',
+        [no]);
+    for (var row in res) {
+      if (row[0] != 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  static bool ValidCredit(String credit) {
+    int? newcredit = int.tryParse(credit);
+    if (newcredit == null) {
+      return false;
+    }
+    if (0 <= newcredit && newcredit <= 10) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  static void ShowAlert(String title, String alert, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("title"),
+          content: Text(
+            alert,
+            style: TextStyle(color: Colors.red),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                "确定",
+                style: TextStyle(fontSize: 15),
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
   Global() {
     initDatabase();
   }
@@ -141,7 +190,6 @@ class Global {
         'select Pno from People'
         ' where Pno = ?',
         ['0']);
-    await Future.delayed(Duration(seconds: 1));
     if (res.isEmpty) {
       await conn.query(
           'insert into People values(?,?,?,?,?)', ['0', 'admin', '未知', 0, 0]);
@@ -153,7 +201,23 @@ class Global {
         'Ano char(9),'
         'foreign key (Ano) references People(Pno))');
     //0管理员1老师2学生
-    await Future.delayed(Duration(seconds: 1));
+    await conn.query('create table if not exists Course('
+        'Cno char(9) primary key,'
+        'Cname char(20),'
+        'Ccredit smallint)');
+    await conn.query('create table if not exists TC('
+        'Tno char(9),'
+        'Cno char(9),'
+        'primary key (Tno,Cno),'
+        'foreign key (Tno) references People(Pno),'
+        'foreign key (Cno) references Course(Cno))');
+    await conn.query('create table if not exists SC('
+        'Sno char(9),'
+        'Cno char(9),'
+        'Grade smallint,'
+        'primary key (Sno,Cno),'
+        'foreign key (Sno) references People(Pno),'
+        'foreign key (Cno) references Course(Cno))');
     res = await conn.query(
         'select Ano from Account'
         ' where Aname = ?',

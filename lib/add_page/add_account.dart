@@ -1,35 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:student_class_system/global.dart';
 
-class AddTeacherPage extends StatefulWidget {
-  const AddTeacherPage({super.key});
+class AddAccountPage extends StatefulWidget {
+  const AddAccountPage({super.key});
 
   @override
-  State<AddTeacherPage> createState() => _AddTeacherPageState();
+  State<AddAccountPage> createState() => _AddAccountPageState();
 }
 
-class _AddTeacherPageState extends State<AddTeacherPage> {
-  List<String> colstr = ["编号", "姓名", "性别", "年龄"];
+class _AddAccountPageState extends State<AddAccountPage> {
+  List<String> colstr = ["用户名", "密码", "角色", "编号"];
   List<IconData> icons = [
-    Icons.numbers,
     Icons.person,
-    Icons.wc,
-    Icons.child_care
+    Icons.lock,
+    Icons.groups,
+    Icons.numbers
   ];
-  List<String> hint = ["", "", "男或女", ""];
+  List<String> hint = ["", "", "0表示管理员1表示学生2表示老师", ""];
   List<TextEditingController> cs = [];
   List<FocusNode> focus = [];
   List<Widget> col = [];
 
-  Future<void> addTeaData(
-      String no, String name, String sex, String age) async {
-    if (await Global.ValidPeopleNo(no) &&
-        Global.ValidName(name) &&
-        Global.ValidSex(sex) &&
-        Global.ValidAge(age)) {
-      int newage = int.parse(age);
+  Future<bool> addAccData(
+      String name, String pass, String role, String no) async {
+    if (await Global.ValidAccName(name) &&
+        Global.ValidPass(pass) &&
+        await Global.ValidAccNoRole(no, role)) {
+      int newrole = int.parse(role);
       await Global.conn.query(
-          'insert into People values(?,?,?,?,?)', [no, name, sex, newage, 2]);
+          'insert into Account values(?,?,?,?)', [name, pass, newrole, no]);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void add(BuildContext context) async {
+    if (await addAccData(cs[0].text, cs[1].text, cs[2].text, cs[3].text)) {
+      Navigator.pop(context);
+    } else {
+      Global.ShowAlert("添加失败", "格式有误！", context);
     }
   }
 
@@ -51,22 +61,20 @@ class _AddTeacherPageState extends State<AddTeacherPage> {
         ),
       ),
     );
-    col.addAll(
-      List.generate(colstr.length - 1, (index) {
-        return TextField(
-          autofocus: true,
-          controller: cs[index],
-          decoration: InputDecoration(
-            labelText: colstr[index],
-            prefixIcon: Icon(icons[index]),
-            hintText: hint[index],
-          ),
-          focusNode: focus[index],
-          onEditingComplete: () =>
-              FocusScope.of(context).requestFocus(focus[index + 1]),
-        );
-      }),
-    );
+    col.addAll(List<Widget>.generate(colstr.length - 1, (index) {
+      return TextField(
+        autofocus: true,
+        controller: cs[index],
+        decoration: InputDecoration(
+          labelText: colstr[index],
+          prefixIcon: Icon(icons[index]),
+          hintText: hint[index],
+        ),
+        focusNode: focus[index],
+        onEditingComplete: () =>
+            FocusScope.of(context).requestFocus(focus[index + 1]),
+      );
+    }));
     col.add(
       TextField(
         autofocus: true,
@@ -77,10 +85,7 @@ class _AddTeacherPageState extends State<AddTeacherPage> {
           hintText: hint[colstr.length - 1],
         ),
         focusNode: focus[colstr.length - 1],
-        onEditingComplete: () async {
-          await addTeaData(cs[0].text, cs[1].text, cs[2].text, cs[3].text);
-          Navigator.pop(context);
-        },
+        onEditingComplete: () => add(context),
       ),
     );
     col.add(
@@ -88,10 +93,7 @@ class _AddTeacherPageState extends State<AddTeacherPage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           ElevatedButton(
-            onPressed: () async {
-              await addTeaData(cs[0].text, cs[1].text, cs[2].text, cs[3].text);
-              Navigator.pop(context);
-            },
+            onPressed: () => add(context),
             child: Text(
               '保存',
             ),
@@ -116,7 +118,7 @@ class _AddTeacherPageState extends State<AddTeacherPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("添加教师信息")),
+      appBar: AppBar(title: Text("新建账户")),
       body: Center(
         child: SizedBox(
           width: MediaQuery.of(context).size.width / 2,

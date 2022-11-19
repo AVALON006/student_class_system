@@ -18,8 +18,8 @@ class _PersonInfoPageState extends State<PersonInfoPage> {
   //TODO 修改Person info部分
   void AddStuInfo() async {
     Results res = await Global.conn.query(
-        'select Sname,Ssex,Sage from Student where '
-        'Sno = ?',
+        'select Pname,Psex,Page from People where '
+        'Pno = ? and Prole = 1',
         [Global.account!.no]);
     for (var row in res) {
       perinfo.add(row[0]);
@@ -29,21 +29,23 @@ class _PersonInfoPageState extends State<PersonInfoPage> {
       break;
     }
     perinfo.add(Global.account!.no);
+    setState(() {});
   }
 
   void AddTeaInfo() async {
     Results res = await Global.conn.query(
-        'select Tname,Tsex,Tage from Teacher where '
-        'Tno = ?',
+        'select Pname,Psex,Page from People where '
+        'Pno = ? and Prole = 2',
         [Global.account!.no]);
     for (var row in res) {
       perinfo.add(row[0]);
       perinfo.add(row[1]);
       perinfo.add('教师');
-      perinfo.add(row[2]);
+      perinfo.add(row[2].toString());
       break;
     }
     perinfo.add(Global.account!.no);
+    setState(() {});
   }
 
   void save(int index) async {
@@ -151,6 +153,17 @@ class _PersonInfoPageState extends State<PersonInfoPage> {
               );
             }
             i = i - 1;
+            if (i > perinfo.length) {
+              return Container(
+                padding: const EdgeInsets.all(16.0),
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: 24.0,
+                  height: 24.0,
+                  child: CircularProgressIndicator(strokeWidth: 2.0),
+                ),
+              );
+            }
             return ListTile(
               tileColor: i.isEven ? Colors.grey.withOpacity(0.3) : Colors.white,
               title: Text(

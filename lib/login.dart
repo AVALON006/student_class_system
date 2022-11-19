@@ -38,28 +38,7 @@ class _LoginPageState extends State<LoginPage> {
       }
       Navigator.pushNamed(context, "home");
     } else {
-      showDialog(
-        context: this.context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text("登陆失败"),
-            content: Text(
-              "用户名或密码错误！",
-              style: TextStyle(color: Colors.red),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                  "确定",
-                  style: TextStyle(fontSize: 15),
-                ),
-              )
-            ],
-          );
-        },
-      );
-    }
+      Global.ShowAlert("登陆失败", "用户名或密码错误！",context);
   }
 
   @override
