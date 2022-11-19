@@ -112,7 +112,8 @@ class _AccountManagePageState extends State<AccountManagePage> {
                       break;
                     case 4:
                       String newno = controller.text;
-                      if (!await Global.ValidAccNo(newno)) {
+                      if (!await Global.ValidAccNoRole(
+                          newno, Global.role[accs[index].role])) {
                         break;
                       }
                       await Global.conn.query(
@@ -228,7 +229,10 @@ class _AccountManagePageState extends State<AccountManagePage> {
       right: 30,
       bottom: 30,
       child: FloatingActionButton(
-        onPressed: () => Navigator.pushNamed(context, 'add_acc'),
+        onPressed: () async {
+          await Navigator.pushNamed(context, 'add_acc');
+          initrows();
+        },
         tooltip: "新建账户",
         child: Icon(Icons.add),
       ),

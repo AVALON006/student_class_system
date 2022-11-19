@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -96,7 +97,10 @@ class Global {
     }
   }
 
-  static Future<bool> ValidAccNo(String no) async {
+  static Future<bool> ValidAccNoRole(String no, String role) async {
+    if (!ValidRole(role)) {
+      return false;
+    }
     Results res = await Global.conn.query(
         'select count(*) from Account '
         'where Ano = ?',
@@ -108,8 +112,8 @@ class Global {
     }
     res = await Global.conn.query(
         'select count(*) from People '
-        'where Pno = ?',
-        [no]);
+        'where Pno = ? and Prole = ?',
+        [no, int.parse(role)]);
     for (var row in res) {
       if (row[0] == 0) {
         return false;
@@ -137,7 +141,7 @@ class Global {
         'select Pno from People'
         ' where Pno = ?',
         ['0']);
-
+    await Future.delayed(Duration(seconds: 1));
     if (res.isEmpty) {
       await conn.query(
           'insert into People values(?,?,?,?,?)', ['0', 'admin', '未知', 0, 0]);

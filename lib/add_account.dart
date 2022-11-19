@@ -25,8 +25,7 @@ class _AddAccountPageState extends State<AddAccountPage> {
       String name, String pass, String role, String no) async {
     if (await Global.ValidAccName(name) &&
         Global.ValidPass(pass) &&
-        Global.ValidRole(role) &&
-        await Global.ValidAccNo(no)) {
+        await Global.ValidAccNoRole(no, role)) {
       int newrole = int.parse(role);
       await Global.conn.query(
           'insert into Account values(?,?,?,?)', [name, pass, newrole, no]);
