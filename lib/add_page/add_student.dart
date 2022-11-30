@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:student_class_system/global.dart';
 
-class AddTeacherPage extends StatefulWidget {
-  const AddTeacherPage({super.key});
+class AddStudentPage extends StatefulWidget {
+  const AddStudentPage({super.key});
 
   @override
-  State<AddTeacherPage> createState() => _AddTeacherPageState();
+  State<AddStudentPage> createState() => _AddStudentPageState();
 }
 
-class _AddTeacherPageState extends State<AddTeacherPage> {
+class _AddStudentPageState extends State<AddStudentPage> {
   List<String> colstr = ["编号", "姓名", "性别", "年龄"];
   List<IconData> icons = [
     Icons.numbers,
@@ -29,7 +29,7 @@ class _AddTeacherPageState extends State<AddTeacherPage> {
         Global.ValidAge(age)) {
       int newage = int.parse(age);
       await Global.conn.query(
-          'insert into People values(?,?,?,?,?)', [no, name, sex, newage, 2]);
+          'insert into People values(?,?,?,?,?)', [no, name, sex, newage, 1]);
       return true;
     } else {
       return false;
@@ -52,7 +52,7 @@ class _AddTeacherPageState extends State<AddTeacherPage> {
       SizedBox(
         height: 60,
         child: Text(
-          '新增教师信息',
+          '新增学生信息',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Colors.blue,
@@ -127,7 +127,7 @@ class _AddTeacherPageState extends State<AddTeacherPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("添加教师信息")),
+      appBar: AppBar(title: Text("添加学生信息")),
       body: Center(
         child: SizedBox(
           width: MediaQuery.of(context).size.width / 2,

@@ -3,19 +3,19 @@ import 'package:provider/provider.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:student_class_system/global.dart';
 import 'package:student_class_system/cross_global.dart';
-import 'package:student_class_system/people.dart';
+import 'package:student_class_system/basic_class/people.dart';
 
-class TeacherManagePage extends StatefulWidget {
-  const TeacherManagePage({super.key});
+class StudentManagePage extends StatefulWidget {
+  const StudentManagePage({super.key});
 
   @override
-  State<TeacherManagePage> createState() => _TeacherManagePageState();
+  State<StudentManagePage> createState() => _StudentManagePageState();
 }
 
-class _TeacherManagePageState extends State<TeacherManagePage> {
+class _StudentManagePageState extends State<StudentManagePage> {
   List<String> colstr = ["编号", "姓名", "性别", "年龄"];
   List<DataColumn> cols = [];
-  List<Teacher> teas = [];
+  List<Student> stus = [];
   List<bool> selected = [];
 
   void initcols() {
@@ -31,16 +31,16 @@ class _TeacherManagePageState extends State<TeacherManagePage> {
 
   void initrows() async {
     Results res = await Global.conn
-        .query('select Pno,Pname,Psex,Page from People where Prole = 2');
-    teas = [];
+        .query('select Pno,Pname,Psex,Page from People where Prole = 1');
+    stus = [];
     for (var row in res) {
-      teas.add(Teacher(row[0], row[1], row[2], row[3]));
+      stus.add(Student(row[0], row[1], row[2], row[3]));
       selected.add(false);
     }
     setState(() {});
   }
 
-  void modifyTea(int index, int num) {
+  void modifyStu(int index, int num) {
     switch (num) {
       case 1:
         break;
@@ -54,7 +54,7 @@ class _TeacherManagePageState extends State<TeacherManagePage> {
     }
   }
 
-  void deleteTea() {}
+  void deleteStu() {}
 
   @override
   void initState() {
@@ -72,7 +72,7 @@ class _TeacherManagePageState extends State<TeacherManagePage> {
       child: DataTable(
         columns: cols,
         rows: List<DataRow>.generate(
-          teas.length,
+          stus.length,
           (int index) => DataRow(
             color: MaterialStateProperty.resolveWith<Color?>(
                 (Set<MaterialState> states) {
@@ -88,27 +88,27 @@ class _TeacherManagePageState extends State<TeacherManagePage> {
             }),
             cells: <DataCell>[
               DataCell(
-                Text(teas[index].no),
+                Text(stus[index].no),
                 onTap: () {
-                  modifyTea(index, 1);
+                  modifyStu(index, 1);
                 },
               ),
               DataCell(
-                Text(teas[index].name),
+                Text(stus[index].name),
                 onTap: () {
-                  modifyTea(index, 2);
+                  modifyStu(index, 2);
                 },
               ),
               DataCell(
-                Text(teas[index].sex),
+                Text(stus[index].sex),
                 onTap: () {
-                  modifyTea(index, 3);
+                  modifyStu(index, 3);
                 },
               ),
               DataCell(
-                Text(teas[index].age.toString()),
+                Text(stus[index].age.toString()),
                 onTap: () {
-                  modifyTea(index, 4);
+                  modifyStu(index, 4);
                 },
               ),
             ],
@@ -131,7 +131,7 @@ class _TeacherManagePageState extends State<TeacherManagePage> {
           child: ElevatedButton.icon(
         icon: Icon(Icons.delete),
         label: Text("删除"),
-        onPressed: deleteTea,
+        onPressed: deleteStu,
       )),
     );
     List<Widget> colchild = [];
@@ -150,10 +150,10 @@ class _TeacherManagePageState extends State<TeacherManagePage> {
       bottom: 30,
       child: FloatingActionButton(
         onPressed: () async {
-          await Navigator.pushNamed(context, 'add_tea');
+          await Navigator.pushNamed(context, 'add_stu');
           initrows();
         },
-        tooltip: "添加教师信息",
+        tooltip: "添加学生",
         child: Icon(Icons.add),
       ),
     );

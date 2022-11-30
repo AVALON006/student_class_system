@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
-import 'package:student_class_system/account.dart';
+import 'package:student_class_system/basic_class/account.dart';
 
 class Global {
   static const themes = <MaterialColor>[

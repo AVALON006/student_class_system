@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:provider/provider.dart';
 import 'package:student_class_system/cross_global.dart';
-import 'package:student_class_system/account.dart';
+import 'package:student_class_system/basic_class/account.dart';
 import 'package:student_class_system/global.dart';
 
 class AccountManagePage extends StatefulWidget {
@@ -33,6 +33,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
   }
 
   void initrows() async {
+    accs = [];
     Results res =
         await Global.conn.query('select Aname,Apass,Arole,Ano from Account');
     for (var row in res) {

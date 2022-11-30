@@ -25,7 +25,7 @@ class _PersonInfoPageState extends State<PersonInfoPage> {
       perinfo.add(row[0]);
       perinfo.add(row[1]);
       perinfo.add('学生');
-      perinfo.add(row[2]);
+      perinfo.add(row[2].toString());
       break;
     }
     perinfo.add(Global.account!.no);

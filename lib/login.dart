@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
-import './global.dart';
-import 'account.dart';
+import 'package:student_class_system/global.dart';
+import 'basic_class/account.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

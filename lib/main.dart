@@ -5,14 +5,17 @@ import 'package:student_class_system/left_drawer.dart';
 import 'package:student_class_system/login.dart';
 import 'package:window_size/window_size.dart';
 import 'package:provider/provider.dart';
-import 'package:student_class_system/teacher_manage.dart';
+import 'package:student_class_system/manage_page/teacher_manage.dart';
 import 'package:student_class_system/add_page/add_teacher.dart';
-import 'package:student_class_system/teacourse_manage.dart';
+import 'package:student_class_system/manage_page/teacourse_manage.dart';
 import 'package:student_class_system/person_info.dart';
 import 'package:student_class_system/global.dart';
-import 'package:student_class_system/account_manage.dart';
+import 'package:student_class_system/manage_page/account_manage.dart';
 import 'package:student_class_system/add_page/add_tea_course.dart';
-import 'package:student_class_system/tea_course_stu_manage.dart';
+import 'package:student_class_system/manage_page/tea_course_stu_manage.dart';
+import 'package:student_class_system/manage_page/student_manage.dart';
+import 'package:student_class_system/add_page/add_student.dart';
+import 'package:student_class_system/manage_page/all_teacourse_manage.dart';
 
 import 'dart:io';
 
@@ -64,7 +67,8 @@ class MyApp extends StatelessWidget {
           "per_info": (context) => PersonInfoPage(),
           "add_acc": (context) => AddAccountPage(),
           "add_tea": (context) => AddTeacherPage(),
-          'add_tea_course': (context) => AddTeaCoursePage(),
+          "add_stu": (context) => AddStudentPage(),
+          "add_tea_course": (context) => AddTeaCoursePage(),
         },
         theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -88,11 +92,20 @@ class _MyHomePageState extends State<MyHomePage> {
     ["已选课程", "未选课程"],
     ["课程管理", "学生管理"]
   ];
+  List<List<int>> unfinishedindex = [
+    [3],
+    [0, 1],
+    []
+  ];
   List<List<Widget>> tabpage = [
     [
       AccountManagePage(),
       TeacherManagePage(),
-      //TODO 添加其它页面的内容
+      StudentManagePage(),
+      Scaffold(
+        appBar: AppBar(title: Text('管理员管理选课信息界面')),
+      ),
+      AllTeaCourseManagePage(),
     ],
     [
       Scaffold(
@@ -182,23 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: tabs.map((Tab tab) {
             String label = tab.text!;
             int index = tabs.indexOf(tab);
-            if (index < 2) {
-              return tabpage[Global.account!.role][index];
-            }
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "This is the $label tab",
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                  const Text(
-                    'You have pushed the button this many times:',
-                  ),
-                ],
-              ),
-            );
+            return tabpage[Global.account!.role][index];
           }).toList(),
         ),
       ),

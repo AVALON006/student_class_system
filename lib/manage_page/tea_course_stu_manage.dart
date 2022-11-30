@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
-import 'package:student_class_system/people.dart';
+import 'package:student_class_system/basic_class/people.dart';
 import 'package:student_class_system/global.dart';
 
 class TeaCourseStuManagePage extends StatefulWidget {
