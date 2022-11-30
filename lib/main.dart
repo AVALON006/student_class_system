@@ -12,6 +12,7 @@ import 'package:student_class_system/person_info.dart';
 import 'package:student_class_system/global.dart';
 import 'package:student_class_system/account_manage.dart';
 import 'package:student_class_system/add_page/add_tea_course.dart';
+import 'package:student_class_system/tea_course_stu_manage.dart';
 
 import 'dart:io';
 
@@ -103,9 +104,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ],
     [
       TeaCourseManagePage(),
-      Scaffold(
-        appBar: AppBar(title: Text('老师第二页')),
-      ),
+      TeaCourseStuManagePage(),
     ],
   ];
   List<Tab> tabs = [];
@@ -147,20 +146,36 @@ class _MyHomePageState extends State<MyHomePage> {
             },
           ),
           actions: [
-            IconButton(
-              onPressed: () {
-                global.switchMulti();
+            Builder(
+              builder: (context) {
+                int index = DefaultTabController.of(context)!.index;
+                if (Global.account!.role == 2 && index == 1) {
+                  return Container();
+                } else {
+                  return IconButton(
+                    onPressed: () {
+                      global.switchMulti();
+                    },
+                    icon: Icon(
+                      global.multi
+                          ? Icons.check_box
+                          : Icons.check_box_outline_blank,
+                      color: Colors.white,
+                    ),
+                  );
+                }
               },
-              icon: Icon(global.multi
-                  ? Icons.check_box
-                  : Icons.check_box_outline_blank),
-              color: Colors.white,
             ),
             SizedBox(
               width: 50,
             ),
           ],
-          bottom: TabBar(isScrollable: true, tabs: tabs),
+          bottom: TabBar(
+              onTap: (index) {
+                setState(() {});
+              },
+              isScrollable: true,
+              tabs: tabs),
         ),
         drawer: LeftDrawer(),
         body: TabBarView(

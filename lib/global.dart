@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
@@ -26,6 +25,18 @@ class Global {
   static Account? account;
   static List<String> role = ["管理员", "学生", "老师"];
   static String reg0_20 = ".{1,20}";
+  static Widget waitMySql = Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CircularProgressIndicator(),
+        Text(
+          "连接数据库中...",
+          style: TextStyle(fontSize: 20),
+        ),
+      ],
+    ),
+  );
 
   static late MySqlConnection conn;
 

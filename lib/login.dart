@@ -38,68 +38,73 @@ class _LoginPageState extends State<LoginPage> {
       }
       Navigator.pushNamed(context, "home");
     } else {
-      Global.ShowAlert("登陆失败", "用户名或密码错误！",context);
+      Global.ShowAlert("登陆失败", "用户名或密码错误！", context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                "选课系统",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 30,
-                ),
-              ),
-              SizedBox(
-                height: 70,
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width / 3,
-                child: TextField(
-                  autofocus: true,
-                  controller: usernamecontroller,
-                  decoration: InputDecoration(
-                    labelText: "用户名",
-                    prefixIcon: Icon(Icons.person),
+    if (Global.conn == null) {
+      return Global.waitMySql;
+    } else {
+      return Scaffold(
+        body: Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  "选课系统",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 30,
                   ),
-                  focusNode: usernamefocusnode,
-                  onEditingComplete: () =>
-                      FocusScope.of(context).requestFocus(passwordfocusnode),
                 ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width / 3,
-                child: TextField(
-                  obscureText: true,
-                  autofocus: true,
-                  controller: passwordcontroller,
-                  decoration: InputDecoration(
-                    labelText: "密码",
-                    prefixIcon: Icon(Icons.lock),
+                SizedBox(
+                  height: 70,
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width / 3,
+                  child: TextField(
+                    autofocus: true,
+                    controller: usernamecontroller,
+                    decoration: InputDecoration(
+                      labelText: "用户名",
+                      prefixIcon: Icon(Icons.person),
+                    ),
+                    focusNode: usernamefocusnode,
+                    onEditingComplete: () =>
+                        FocusScope.of(context).requestFocus(passwordfocusnode),
                   ),
-                  focusNode: passwordfocusnode,
-                  onEditingComplete: login,
                 ),
-              ),
-              SizedBox(
-                height: 70,
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(minimumSize: Size(100, 50)),
-                onPressed: login,
-                child: Text(
-                  "登录",
-                  style: TextStyle(fontSize: 15),
+                Container(
+                  width: MediaQuery.of(context).size.width / 3,
+                  child: TextField(
+                    obscureText: true,
+                    autofocus: true,
+                    controller: passwordcontroller,
+                    decoration: InputDecoration(
+                      labelText: "密码",
+                      prefixIcon: Icon(Icons.lock),
+                    ),
+                    focusNode: passwordfocusnode,
+                    onEditingComplete: login,
+                  ),
                 ),
-              ),
-            ]),
-      ),
-    );
+                SizedBox(
+                  height: 70,
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(minimumSize: Size(100, 50)),
+                  onPressed: login,
+                  child: Text(
+                    "登录",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ),
+              ]),
+        ),
+      );
+    }
   }
 }

@@ -113,11 +113,9 @@ class _PersonInfoPageState extends State<PersonInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("个人信息"),
-      ),
-      body: ListView.builder(
+    Widget body = Global.waitMySql;
+    if (perinfo.length == prefix.length) {
+      body = ListView.builder(
         itemCount: prefix.length * 2 + 1,
         itemBuilder: (BuildContext context, int index) {
           if (index % 2 != 0) {
@@ -211,7 +209,14 @@ class _PersonInfoPageState extends State<PersonInfoPage> {
             );
           }
         },
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("个人信息"),
       ),
+      body: body,
     );
   }
 }
