@@ -15,7 +15,8 @@ class _PersonInfoPageState extends State<PersonInfoPage> {
   List<String> perinfo = [];
   List<String> prefix = ['用户名', '姓名', '性别', '角色', '年龄', '编号'];
   List<String> hint = ['', '', '请输入男或女', '', '请输入0~100的数字', ''];
-  //TODO 修改Person info部分
+  List<bool> showErr = List.generate(6, ((index) => false));
+
   void AddStuInfo() async {
     Results res = await Global.conn.query(
         'select Pname,Psex,Page from People where '
@@ -59,29 +60,19 @@ class _PersonInfoPageState extends State<PersonInfoPage> {
     switch (index) {
       case 1:
         //姓名
-        Global.conn.query('update Student set Sname = ? where Sno = ?',
+        Global.conn.query('update People set Pname = ? where Pno = ?',
             [text, Global.account!.no]);
         setState(() {
           perinfo[1] = text;
         });
         break;
-      case 2:
-        //性别
-        if (text.compareTo('男') != 0 || text.compareTo("女") != 0) {
-          return;
-        }
-        Global.conn.query('update Student set Ssex = ? where Sno = ?',
-            [text, Global.account!.no]);
-        setState(() {
-          perinfo[2] = text;
-        });
-        break;
       case 4:
         //年龄
-        if (int.tryParse(text) == null) {
+        if (!Global.ValidAge(text)) {
+          showErr[4] = true;
           return;
         } else {
-          Global.conn.query('update Student set Sage = ? where Sno = ?',
+          Global.conn.query('update People set Page = ? where Pno = ?',
               [int.parse(text), Global.account!.no]);
           setState(() {
             perinfo[3] = text;
@@ -176,35 +167,92 @@ class _PersonInfoPageState extends State<PersonInfoPage> {
                 if (forbidnum.contains(i)) {
                   return;
                 }
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    controller.clear();
-                    return AlertDialog(
-                      title: Text("修改" + prefix[i]),
-                      content: TextField(
-                        autofocus: true,
-                        controller: controller,
-                        decoration: InputDecoration(
-                          hintText: hint[i],
+                if (Global.account!.no.compareTo('0') == 0) {
+                  return;
+                }
+                showErr[i] = false;
+                if (i == 2) {
+                  //性别
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return SimpleDialog(
+                        title: const Text('请选择性别'),
+                        children: <Widget>[
+                          SimpleDialogOption(
+                            onPressed: () async {
+                              Global.conn.query(
+                                  'update People set Psex = ? where Pno = ?',
+                                  ['男', Global.account!.no]);
+                              setState(() {
+                                perinfo[2] = '男';
+                              });
+                              Navigator.pop(context, '男');
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 6),
+                              child: const Text('男'),
+                            ),
+                          ),
+                          SimpleDialogOption(
+                            onPressed: () async {
+                              Global.conn.query(
+                                  'update People set Psex = ? where Pno = ?',
+                                  ['女', Global.account!.no]);
+                              setState(() {
+                                perinfo[2] = '女';
+                              });
+                              Navigator.pop(context, '女');
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 6),
+                              child: const Text('女'),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      controller.clear();
+                      return AlertDialog(
+                        title: Text("修改" + prefix[i]),
+                        content: TextField(
+                          autofocus: true,
+                          controller: controller,
+                          onEditingComplete: () {
+                            save(i);
+                            Navigator.pop(context);
+                          },
+                          decoration: InputDecoration(
+                            hintText: hint[i],
+                            errorText: showErr[i] ? hint[i] : null,
+                          ),
                         ),
-                      ),
-                      actions: [
-                        TextButton(
-                            onPressed: () {
-                              save(i);
-                              Navigator.pop(context);
-                            },
-                            child: Text('保存')),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text('取消'))
-                      ],
-                    );
-                  },
-                );
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                save(i);
+                                Navigator.pop(context);
+                              },
+                              child: Text('保存')),
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('取消'))
+                        ],
+                      );
+                    },
+                  ).then((value) {
+                    if (showErr[i] == true) {
+                      Global.ShowAlert("修改失败", "${hint[i]}！", context);
+                    }
+                  });
+                }
               },
             );
           }
@@ -215,6 +263,11 @@ class _PersonInfoPageState extends State<PersonInfoPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("个人信息"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+          tooltip: "返回",
+        ),
       ),
       body: body,
     );
