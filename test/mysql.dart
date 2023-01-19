@@ -8,7 +8,8 @@ void main() async {
       password: 'flutter',
       db: 'scsys');
   var conn = await MySqlConnection.connect(settings);
-  Results rownum = await conn.query('select count(*) from Student');
+  await Future.delayed(Duration(seconds: 1));
+  Results rownum = await conn.query('select count(*) from People');
   if (rownum.isEmpty) {
     await conn.query(
         'create table Student(Sno char(9) primary key,Sname char(20),Ssex char(2),Sage smallint)');
