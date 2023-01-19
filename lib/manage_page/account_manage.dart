@@ -17,6 +17,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
   List<String> colstr = ["用户名", "密码", "角色", "编号"];
   List<DataColumn> cols = [];
   List<bool> selected = [];
+
   TextEditingController controller = TextEditingController();
 
   void initcols() {
@@ -43,7 +44,66 @@ class _AccountManagePageState extends State<AccountManagePage> {
     setState(() {});
   }
 
-  void deleteAcc() {}
+  void deleteAcc() async {
+    for (int i = 0; i < selected.length; i++) {
+      if (selected[i]) {
+        await Global.conn
+            .query('delete from Account where Aname = ?', [accs[i].name]);
+        selected[i] = false;
+        setState(() {
+          accs.removeAt(i);
+        });
+      }
+    }
+  }
+
+  void save(int num, int index) async {
+    switch (num) {
+      //TODO 增加红线提醒
+      case 1:
+        String newname = controller.text;
+        if (!await Global.ValidAccName(newname)) {
+          break;
+        }
+        await Global.conn.query('update Account set Aname = ? where Aname = ?',
+            [newname, accs[index].name]);
+        accs[index].name = newname;
+        Global.account!.name = newname;
+        break;
+      case 2:
+        String newpass = controller.text;
+        if (!Global.ValidPass(newpass)) {
+          break;
+        }
+        await Global.conn.query('update Account set Apass = ? where Aname = ?',
+            [newpass, accs[index].name]);
+        accs[index].pass = newpass;
+        Global.account!.pass = newpass;
+        break;
+      case 3:
+        String newrolestr = controller.text;
+        if (!Global.ValidRole(newrolestr)) {
+          break;
+        }
+        int newrole = int.parse(newrolestr);
+        await Global.conn.query('update Account set Arole = ? where Aname = ?',
+            [newrole, accs[index].name]);
+        accs[index].role = newrole;
+        break;
+      case 4:
+        String newno = controller.text;
+        if (!await Global.ValidAccNoRole(
+            newno, Global.role[accs[index].role])) {
+          break;
+        }
+        await Global.conn.query('update Account set Ano = ? where Aname = ?',
+            [newno, accs[index].name]);
+        accs[index].no = newno;
+        Global.account!.no = newno;
+        break;
+    }
+    setState(() {});
+  }
 
   void modifyAcc(int index, int num) {
     String hint = '';
@@ -54,16 +114,8 @@ class _AccountManagePageState extends State<AccountManagePage> {
       case 2:
         hint = accs[index].pass;
         break;
-      case 3:
-        hint = Global.role[accs[index].role];
-        break;
-      case 4:
-        hint = accs[index].no;
-        break;
-    }
-    if (num == 4) {
-      //TODO 特殊处理弹出列表
-      return;
+      default:
+        return;
     }
     showDialog(
       context: context,
@@ -73,57 +125,16 @@ class _AccountManagePageState extends State<AccountManagePage> {
           title: Text("修改" + colstr[num - 1]),
           content: TextField(
             autofocus: true,
+            onEditingComplete: () {
+              save(num, index);
+              Navigator.pop(context);
+            },
             controller: controller,
           ),
           actions: [
             TextButton(
-                onPressed: () async {
-                  switch (num) {
-                    //TODO 增加红线提醒
-                    case 1:
-                      String newname = controller.text;
-                      if (!await Global.ValidAccName(newname)) {
-                        break;
-                      }
-                      await Global.conn.query(
-                          'update Account set Aname = ? where Aname = ?',
-                          [newname, accs[index].name]);
-                      accs[index].name = newname;
-                      break;
-                    case 2:
-                      String newpass = controller.text;
-                      if (!Global.ValidPass(newpass)) {
-                        break;
-                      }
-                      await Global.conn.query(
-                          'update Account set Apass = ? where Aname = ?',
-                          [newpass, accs[index].name]);
-                      accs[index].pass = newpass;
-                      break;
-                    case 3:
-                      String newrolestr = controller.text;
-                      if (!Global.ValidRole(newrolestr)) {
-                        break;
-                      }
-                      int newrole = int.parse(newrolestr);
-                      await Global.conn.query(
-                          'update Account set Arole = ? where Aname = ?',
-                          [newrole, accs[index].name]);
-                      accs[index].role = newrole;
-                      break;
-                    case 4:
-                      String newno = controller.text;
-                      if (!await Global.ValidAccNoRole(
-                          newno, Global.role[accs[index].role])) {
-                        break;
-                      }
-                      await Global.conn.query(
-                          'update Account set Ano = ? where Aname = ?',
-                          [newno, accs[index].name]);
-                      accs[index].no = newno;
-                      break;
-                  }
-                  setState(() {});
+                onPressed: () {
+                  save(num, index);
                   Navigator.pop(context);
                 },
                 child: Text('保存')),
@@ -213,7 +224,10 @@ class _AccountManagePageState extends State<AccountManagePage> {
           child: ElevatedButton.icon(
         icon: Icon(Icons.delete),
         label: Text("删除"),
-        onPressed: deleteAcc,
+        onPressed: () {
+          deleteAcc();
+          global.switchMulti();
+        },
       )),
     );
     List<Widget> colchildren = [];

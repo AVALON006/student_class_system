@@ -21,26 +21,29 @@ class _AddAccountPageState extends State<AddAccountPage> {
   List<FocusNode> focus = [];
   List<Widget> col = [];
 
-  Future<bool> addAccData(
-      String name, String pass, String role, String no) async {
-    if (await Global.ValidAccName(name) &&
-        Global.ValidPass(pass) &&
-        await Global.ValidAccNoRole(no, role)) {
-      int newrole = int.parse(role);
-      await Global.conn.query(
-          'insert into Account values(?,?,?,?)', [name, pass, newrole, no]);
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   void add(BuildContext context) async {
-    if (await addAccData(cs[0].text, cs[1].text, cs[2].text, cs[3].text)) {
-      Navigator.pop(context);
-    } else {
-      Global.ShowAlert("添加失败", "格式有误！", context);
+    if (!await Global.ValidAccName(cs[0].text)) {
+      //验证正确的用户名
+      Global.ShowAlert("添加失败", "用户名应不能和已有用户名重复！", context);
+      return;
     }
+    if (!Global.ValidPass(cs[1].text)) {
+      Global.ShowAlert("添加失败", "密码应不超过20个字符！", context);
+      return;
+    }
+    if (!Global.ValidRole(cs[2].text)) {
+      Global.ShowAlert("添加失败", "角色信息填写错误！", context);
+      return;
+    }
+    if (!await Global.ValidAccNoRole(cs[3].text, cs[2].text)) {
+      Global.ShowAlert("添加失败", "角色与编号不对应或缺少与该编号对应的人", context);
+      return;
+    }
+    int newrole = int.parse(cs[2].text);
+    await Global.conn.query('insert into Account values(?,?,?,?)',
+        [cs[0].text, cs[1].text, newrole, cs[3].text]);
+
+    Navigator.pop(context);
   }
 
   @override
@@ -118,7 +121,14 @@ class _AddAccountPageState extends State<AddAccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("新建账户")),
+      appBar: AppBar(
+        title: Text("新建账户"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+          tooltip: "返回",
+        ),
+      ),
       body: Center(
         child: SizedBox(
           width: MediaQuery.of(context).size.width / 2,
