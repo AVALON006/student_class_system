@@ -21,27 +21,31 @@ class _AddTeacherPageState extends State<AddTeacherPage> {
   List<FocusNode> focus = [];
   List<Widget> col = [];
 
-  Future<bool> addTeaData(
-      String no, String name, String sex, String age) async {
-    if (await Global.ValidPeopleNo(no) &&
-        Global.ValidName(name) &&
-        Global.ValidSex(sex) &&
-        Global.ValidAge(age)) {
-      int newage = int.parse(age);
-      await Global.conn.query(
-          'insert into People values(?,?,?,?,?)', [no, name, sex, newage, 2]);
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   void add(BuildContext context) async {
-    if (await addTeaData(cs[0].text, cs[1].text, cs[2].text, cs[3].text)) {
-      Navigator.pop(context);
-    } else {
-      Global.ShowAlert("添加失败", "格式有误！", context);
+    String no = cs[0].text;
+    String name = cs[1].text;
+    String sex = cs[2].text;
+    String age = cs[3].text;
+    if (!await Global.ValidPeopleNo(no)) {
+      Global.ShowAlert("添加失败", "和已有编号重复！", context);
+      return;
     }
+    if (!Global.ValidName(name)) {
+      Global.ShowAlert("添加失败", "用户名应少于20个字符！", context);
+      return;
+    }
+    if (!Global.ValidSex(sex)) {
+      Global.ShowAlert("添加失败", "性别只能填男或女哦~", context);
+      return;
+    }
+    if (!Global.ValidAge(age)) {
+      Global.ShowAlert("添加失败", "请输入0~100的数字", context);
+      return;
+    }
+    int newage = int.parse(age);
+    await Global.conn.query(
+        'insert into People values(?,?,?,?,?)', [no, name, sex, newage, 2]);
+    Navigator.pop(context);
   }
 
   @override
@@ -88,10 +92,7 @@ class _AddTeacherPageState extends State<AddTeacherPage> {
           hintText: hint[colstr.length - 1],
         ),
         focusNode: focus[colstr.length - 1],
-        onEditingComplete: () async {
-          await addTeaData(cs[0].text, cs[1].text, cs[2].text, cs[3].text);
-          Navigator.pop(context);
-        },
+        onEditingComplete: () => add(context),
       ),
     );
     col.add(
@@ -99,10 +100,7 @@ class _AddTeacherPageState extends State<AddTeacherPage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           ElevatedButton(
-            onPressed: () async {
-              await addTeaData(cs[0].text, cs[1].text, cs[2].text, cs[3].text);
-              Navigator.pop(context);
-            },
+            onPressed: () => add(context),
             child: Text(
               '保存',
             ),
@@ -127,7 +125,14 @@ class _AddTeacherPageState extends State<AddTeacherPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("添加教师信息")),
+      appBar: AppBar(
+        title: Text("添加教师信息"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+          tooltip: "返回",
+        ),
+      ),
       body: Center(
         child: SizedBox(
           width: MediaQuery.of(context).size.width / 2,
