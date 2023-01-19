@@ -158,7 +158,7 @@ class _TeacherManagePageState extends State<TeacherManagePage> {
   }
 
   void deleteTea() async {
-    for (int i = 0; i < selected.length; i++) {
+    for (int i = selected.length - 1; i >= 0; i--) {
       if (selected[i]) {
         await Global.conn
             .query('delete from People where Pno = ?', [teas[i].no]);
@@ -245,7 +245,10 @@ class _TeacherManagePageState extends State<TeacherManagePage> {
           child: ElevatedButton.icon(
         icon: Icon(Icons.delete),
         label: Text("删除"),
-        onPressed: deleteTea,
+        onPressed: () {
+          deleteTea();
+          global.switchMulti();
+        },
       )),
     );
     List<Widget> colchild = [];

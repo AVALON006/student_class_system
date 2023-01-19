@@ -45,7 +45,7 @@ class _AccountManagePageState extends State<AccountManagePage> {
   }
 
   void deleteAcc() async {
-    for (int i = 0; i < selected.length; i++) {
+    for (int i = selected.length - 1; i >= 0; i--) {
       if (selected[i]) {
         await Global.conn
             .query('delete from Account where Aname = ?', [accs[i].name]);
