@@ -40,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       Global.ShowAlert("登陆失败", "用户名或密码错误！", context);
     }
+    FocusScope.of(context).requestFocus(usernamefocusnode);
   }
 
   @override
@@ -47,6 +48,8 @@ class _LoginPageState extends State<LoginPage> {
     if (Global.conn == null) {
       return Global.waitMySql;
     } else {
+      usernamecontroller.text = '';
+      passwordcontroller.text = '';
       return Scaffold(
         body: Center(
           child: Column(
