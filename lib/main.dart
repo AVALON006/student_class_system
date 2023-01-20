@@ -16,6 +16,9 @@ import 'package:student_class_system/manage_page/tea_course_stu_manage.dart';
 import 'package:student_class_system/manage_page/student_manage.dart';
 import 'package:student_class_system/add_page/add_student.dart';
 import 'package:student_class_system/manage_page/all_teacourse_manage.dart';
+import 'package:student_class_system/already_stu_course.dart';
+import 'package:student_class_system/no_stu_course.dart';
+import 'package:student_class_system/manage_page/all_stucourse_manage.dart';
 
 import 'dart:io';
 
@@ -38,6 +41,12 @@ void setupWindow() {
     });
   }
 }
+
+//mysql_client: ^0.0.27
+//https://pub.dev/packages/mysql_client/example
+//支持MySql 8版本的mysql插件
+
+//决定换成SQLite做数据持久化
 
 void main() async {
   setupWindow();
@@ -88,32 +97,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<String> title = ["管理界面", "选课信息", "教学课程"];
   final List<List<String>> tabtext = [
-    ["账户管理", "教师信息管理", "学生信息管理", "选课信息管理", "教学信息管理"],
+    ["账户管理", "教师信息管理", "学生信息管理", "选课信息管理", "任课信息管理"],
     ["已选课程", "未选课程"],
     ["课程管理", "学生管理"]
   ];
-  List<List<int>> unfinishedindex = [
-    [3],
-    [0, 1],
-    []
-  ];
+
   List<List<Widget>> tabpage = [
     [
       AccountManagePage(),
       TeacherManagePage(),
       StudentManagePage(),
-      Scaffold(
-        appBar: AppBar(title: Text('管理员管理选课信息界面')),
-      ),
+      AllStuCourseManagePage(),
       AllTeaCourseManagePage(),
     ],
     [
-      Scaffold(
-        appBar: AppBar(title: Text('学生第一页')),
-      ),
-      Scaffold(
-        appBar: AppBar(title: Text('学生第二页')),
-      ),
+      AlreadyStuCoursePage(),
+      NoStuCoursePage(),
     ],
     [
       TeaCourseManagePage(),

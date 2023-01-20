@@ -127,7 +127,14 @@ class _AddStudentPageState extends State<AddStudentPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("添加学生信息")),
+      appBar: AppBar(
+        title: Text("添加学生信息"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+          tooltip: "返回",
+        ),
+      ),
       body: Center(
         child: SizedBox(
           width: MediaQuery.of(context).size.width / 2,

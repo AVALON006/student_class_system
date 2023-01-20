@@ -117,7 +117,14 @@ class _AddTeaCoursePageState extends State<AddTeaCoursePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("添加教学课程")),
+      appBar: AppBar(
+        title: Text("添加教学课程"),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+          tooltip: "返回",
+        ),
+      ),
       body: Center(
         child: SizedBox(
           width: MediaQuery.of(context).size.width / 2,

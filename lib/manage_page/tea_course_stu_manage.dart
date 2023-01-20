@@ -10,12 +10,12 @@ class TeaCourseStuManagePage extends StatefulWidget {
   State<TeaCourseStuManagePage> createState() => _TeaCourseStuManagePageState();
 }
 
-class CourseItem {
+class StuCourseItem {
   String cno;
   String cname;
   List<Student> stus = [];
   bool isExpanded = false;
-  CourseItem(this.cno, this.cname);
+  StuCourseItem(this.cno, this.cname);
   Future<void> LoadStus() async {
     Results res = await Global.conn.query(
         'select Pno,Pname,Psex,Page from People where Pno in (select Sno from SC where Cno = ?)',
@@ -27,7 +27,8 @@ class CourseItem {
 }
 
 class _TeaCourseStuManagePageState extends State<TeaCourseStuManagePage> {
-  List<CourseItem> items = [];
+  List<StuCourseItem> items = [];
+  bool conn = false;
 
   void loadItems() async {
     Results res = await Global.conn.query(
@@ -35,11 +36,13 @@ class _TeaCourseStuManagePageState extends State<TeaCourseStuManagePage> {
         'where c.Cno=tc.Cno and tc.Tno = ?',
         [Global.account!.no]);
     for (var course in res) {
-      CourseItem tmp = CourseItem(course[0], course[1]);
+      StuCourseItem tmp = StuCourseItem(course[0], course[1]);
       await tmp.LoadStus();
       items.add(tmp);
     }
-    setState(() {});
+    setState(() {
+      conn = true;
+    });
   }
 
   List<ExpansionPanel> buildPanel() {
@@ -50,17 +53,28 @@ class _TeaCourseStuManagePageState extends State<TeaCourseStuManagePage> {
             title: Text(items[index].cname),
           );
         },
-        body: Wrap(
-          spacing: 10,
-          children: List.generate(items[index].stus.length, (stuIndex) {
-            Student stu = items[index].stus[stuIndex];
-            return Chip(
-              label: Text(stu.name),
-              onDeleted: (() {
-                //删除学生
-              }),
-            );
-          }),
+        body: Padding(
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+          child: Wrap(
+            spacing: 20,
+            children: List.generate(items[index].stus.length, (stuIndex) {
+              Student stu = items[index].stus[stuIndex];
+              return Chip(
+                label: Text(
+                  stu.name,
+                ),
+                onDeleted: (() {
+                  //删除学生
+                  Global.conn.query('delete from SC where Sno = ? and Cno = ?',
+                      [stu.no, items[index].cno]);
+                  setState(() {
+                    items[index].stus.removeAt(stuIndex);
+                  });
+                }),
+                deleteButtonTooltipMessage: "删除学生",
+              );
+            }),
+          ),
         ),
         isExpanded: items[index].isExpanded,
       );
@@ -70,13 +84,16 @@ class _TeaCourseStuManagePageState extends State<TeaCourseStuManagePage> {
   @override
   void initState() {
     super.initState();
+    conn = false;
     loadItems();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (items.length == 0) {
+    if (items.length == 0 && !conn) {
       return Global.waitMySql;
+    } else if (items.length == 0 && conn) {
+      return Center(child: Text("暂无数据"));
     } else {
       return SingleChildScrollView(
         child: ExpansionPanelList(

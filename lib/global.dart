@@ -163,7 +163,7 @@ class Global {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("title"),
+          title: Text(title),
           content: Text(
             alert,
             style: TextStyle(color: Colors.red),
@@ -225,7 +225,7 @@ class Global {
     await conn.query('create table if not exists SC('
         'Sno char(9),'
         'Cno char(9),'
-        'Grade smallint,'
+        'Grade int,'
         'primary key (Sno,Cno),'
         'foreign key (Sno) references People(Pno),'
         'foreign key (Cno) references Course(Cno))');

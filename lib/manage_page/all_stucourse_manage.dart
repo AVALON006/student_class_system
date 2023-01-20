@@ -288,6 +288,7 @@ class _AllStuCourseManagePageState extends State<AllStuCourseManagePage> {
                         allStus[stuindex!].name,
                         allCourse[courseindex!].no,
                         allCourse[courseindex!].name));
+                    selected.add(false);
                   });
                 }
                 Navigator.pop(context);
@@ -316,6 +317,7 @@ class _AllStuCourseManagePageState extends State<AllStuCourseManagePage> {
                         allStus[stuindex!].name,
                         allCourse[courseindex!].no,
                         allCourse[courseindex!].name));
+                    selected.add(false);
                   });
                 }
                 Navigator.pop(context);
