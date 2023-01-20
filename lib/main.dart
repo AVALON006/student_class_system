@@ -179,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             SizedBox(
-              width: 50,
+              width: 20,
             ),
           ],
           bottom: TabBar(

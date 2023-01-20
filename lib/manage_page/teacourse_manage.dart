@@ -206,15 +206,14 @@ class _TeaCourseManagePageState extends State<TeaCourseManagePage> {
     Widget delete = SizedBox(
       height: 57,
       width: 784,
-      child: Expanded(
-          child: ElevatedButton.icon(
+      child: ElevatedButton.icon(
         icon: Icon(Icons.delete),
         label: Text("删除"),
         onPressed: () {
           deleteTeaCourse();
           global.switchMulti();
         },
-      )),
+      ),
     );
     List<Widget> colchild = [];
     colchild.add(datatable);

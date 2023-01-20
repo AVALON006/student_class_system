@@ -246,15 +246,14 @@ class _StudentManagePageState extends State<StudentManagePage> {
     Widget delete = SizedBox(
       height: 57,
       width: 784,
-      child: Expanded(
-          child: ElevatedButton.icon(
+      child: ElevatedButton.icon(
         icon: Icon(Icons.delete),
         label: Text("删除"),
         onPressed: () {
           deleteStu();
           global.switchMulti();
         },
-      )),
+      ),
     );
     List<Widget> colchild = [];
     colchild.add(datatable);
